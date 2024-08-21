@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Proxy-based Two-Way Binding</title>
+  </head>
+  <body>
+    <input id="inputElement" type="text" placeholder="Type something..." />
+    <p id="displayElement"></p>
+
+    <script>
+      // 定义一个数据模型
+      let data = {
+        text: "",
+      };
+
+      // 使用Proxy监听数据模型的变化
+      let proxy = new Proxy(data, {
+        set(target, property, value) {
+          if (property === "text") {
+            target[property] = value;
+            // 更新UI
+            document.getElementById("displayElement").innerText = value;
+            return true; // 表明属性设置成功
+          }
+          return false; // 属性设置不成功
+        },
+      });
+
+      // 初始化UI
+      document
+        .getElementById("inputElement")
+        .addEventListener("input", function (e) {
+          // 更新数据模型，Proxy会捕获这个变化并更新UI
+          proxy.text = e.target.value;
+        });
+
+      // 将数据模型的初始值绑定到UI上
+      document.getElementById("displayElement").innerText = data.text;
+    </script>
+  </body>
+</html>
